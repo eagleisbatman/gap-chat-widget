@@ -16,6 +16,8 @@ const PORT = process.env.PORT || 3002;
 // Configuration from environment variables
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const WORKFLOW_ID = process.env.WORKFLOW_ID;
+const FARM_LATITUDE = process.env.FARM_LATITUDE || '-1.2864';
+const FARM_LONGITUDE = process.env.FARM_LONGITUDE || '36.8172';
 
 // Middleware
 app.use(cors({
@@ -59,7 +61,9 @@ app.post('/api/chatkit/session', async (req, res) => {
       headers: {
         'Content-Type': 'application/json',
         'OpenAI-Beta': 'chatkit_beta=v1',
-        'Authorization': `Bearer ${OPENAI_API_KEY}`
+        'Authorization': `Bearer ${OPENAI_API_KEY}`,
+        'X-Farm-Latitude': FARM_LATITUDE,
+        'X-Farm-Longitude': FARM_LONGITUDE
       },
       body: JSON.stringify({
         workflow: { id: WORKFLOW_ID },
@@ -112,7 +116,9 @@ app.post('/api/chatkit/refresh', async (req, res) => {
       headers: {
         'Content-Type': 'application/json',
         'OpenAI-Beta': 'chatkit_beta=v1',
-        'Authorization': `Bearer ${OPENAI_API_KEY}`
+        'Authorization': `Bearer ${OPENAI_API_KEY}`,
+        'X-Farm-Latitude': FARM_LATITUDE,
+        'X-Farm-Longitude': FARM_LONGITUDE
       },
       body: JSON.stringify({
         workflow: { id: WORKFLOW_ID },
