@@ -3,58 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agriculture Weather Assistant</title>
+    <title>FarmerChat - AI-Powered Agriculture Assistant</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <!-- Main Content -->
     <div class="container">
         <header class="header">
-            <div class="logo">
-                <span class="logo-icon">🌾</span>
-                <h1>Agriculture Weather Intelligence</h1>
+            <div class="brand-header">
+                <div class="brand-logos">
+                    <div class="brand-item">
+                        <span class="brand-icon">🌱</span>
+                        <span class="brand-name">Digital Green</span>
+                    </div>
+                    <div class="brand-divider">×</div>
+                    <div class="brand-item">
+                        <span class="brand-icon">☀️</span>
+                        <span class="brand-name">TomorrowNow GAP</span>
+                    </div>
+                </div>
+                <div class="main-logo">
+                    <span class="logo-icon">🌾</span>
+                    <h1>FarmerChat</h1>
+                </div>
+                <p class="tagline">Your AI-powered agriculture intelligence assistant</p>
             </div>
-            <p class="tagline">AI-powered farming assistance with real-time weather data</p>
         </header>
 
         <main class="main-content">
             <div class="hero">
-                <h2>Get instant weather insights for your farm</h2>
-                <p>Ask about weather forecasts, planting recommendations, irrigation schedules, and more</p>
+                <div class="hero-intro">
+                    <h2>Empowering Farmers with AI-Driven Insights</h2>
+                    <p class="hero-description">FarmerChat brings together Digital Green Foundation's expertise in agricultural development and TomorrowNow GAP's climate intelligence to provide you with real-time, actionable farming advice.</p>
+                </div>
 
                 <div class="features">
                     <div class="feature-card">
-                        <span class="feature-icon">☀️</span>
-                        <h3>Weather Forecasts</h3>
-                        <p>7-14 day accurate forecasts</p>
+                        <span class="feature-icon">🌤️</span>
+                        <h3>Weather Intelligence</h3>
+                        <p>Get accurate 7-14 day forecasts powered by TomorrowNow GAP</p>
                     </div>
                     <div class="feature-card">
                         <span class="feature-icon">🌱</span>
-                        <h3>Planting Advice</h3>
-                        <p>Know the best time to plant</p>
+                        <h3>Planting Guidance</h3>
+                        <p>AI-recommended planting schedules based on weather patterns</p>
                     </div>
                     <div class="feature-card">
                         <span class="feature-icon">💧</span>
-                        <h3>Irrigation Guide</h3>
-                        <p>Optimize water usage</p>
+                        <h3>Smart Irrigation</h3>
+                        <p>Optimize water usage with predictive irrigation schedules</p>
                     </div>
                     <div class="feature-card">
-                        <span class="feature-icon">🌾</span>
-                        <h3>Crop Advisory</h3>
-                        <p>Tailored farming recommendations</p>
+                        <span class="feature-icon">📊</span>
+                        <h3>Farming Advisory</h3>
+                        <p>Personalized crop recommendations for your region</p>
                     </div>
                 </div>
 
                 <div class="cta">
                     <button class="btn-primary" onclick="openChat()">
-                        <span>💬</span> Start Chat
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                        </svg>
+                        Start Conversation
                     </button>
+                    <p class="cta-hint">Ask me anything about weather, planting, or irrigation</p>
+                </div>
+
+                <div class="about-section">
+                    <h3>About This Service</h3>
+                    <div class="about-content">
+                        <div class="about-item">
+                            <h4>Digital Green Foundation</h4>
+                            <p>Leveraging technology and grassroots training to improve livelihoods of rural communities across the developing world.</p>
+                        </div>
+                        <div class="about-item">
+                            <h4>TomorrowNow GAP Platform</h4>
+                            <p>Global Agriculture Platform providing hyperlocal weather intelligence and climate insights for farmers worldwide.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
 
         <footer class="footer">
-            <p>Powered by Tomorrow Now GAP • Built with OpenAI ChatKit</p>
+            <div class="footer-content">
+                <div class="footer-brands">
+                    <span>Powered by <strong>Digital Green Foundation</strong></span>
+                    <span class="footer-dot">•</span>
+                    <span><strong>TomorrowNow GAP</strong></span>
+                    <span class="footer-dot">•</span>
+                    <span>OpenAI ChatKit</span>
+                </div>
+                <div class="footer-info">
+                    <p>Supporting farmers in Kenya with AI-driven agriculture intelligence</p>
+                </div>
+            </div>
         </footer>
     </div>
 

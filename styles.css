@@ -10,17 +10,19 @@
     --secondary-color: #4a9d5f;
     --accent-color: #f4a261;
     --bg-color: #f8f9fa;
+    --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
     --text-color: #2c3e50;
     --text-light: #6c757d;
     --border-color: #dee2e6;
     --white: #ffffff;
-    --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.15);
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.12);
 }
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background-color: var(--bg-color);
+    background: var(--bg-gradient);
     color: var(--text-color);
     line-height: 1.6;
 }
@@ -36,32 +38,67 @@ body {
 .header {
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
     color: var(--white);
-    padding: 2rem;
+    padding: 2.5rem 2rem;
     text-align: center;
-    box-shadow: var(--shadow);
+    box-shadow: var(--shadow-md);
 }
 
-.logo {
+.brand-header {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.brand-logos {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 1rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    opacity: 0.95;
+}
+
+.brand-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.brand-icon {
+    font-size: 1.2rem;
+}
+
+.brand-name {
+    font-weight: 500;
+}
+
+.brand-divider {
+    font-size: 1.2rem;
+    opacity: 0.6;
+}
+
+.main-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
 }
 
 .logo-icon {
-    font-size: 3rem;
+    font-size: 3.5rem;
 }
 
 .header h1 {
-    font-size: 2rem;
-    font-weight: 600;
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
 }
 
 .tagline {
     font-size: 1.1rem;
     opacity: 0.95;
-    margin-top: 0.5rem;
+    font-weight: 300;
 }
 
 /* Main Content */
@@ -77,16 +114,24 @@ body {
     text-align: center;
 }
 
+.hero-intro {
+    margin-bottom: 3rem;
+}
+
 .hero h2 {
     font-size: 2.5rem;
     color: var(--text-color);
     margin-bottom: 1rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
 }
 
-.hero > p {
-    font-size: 1.2rem;
+.hero-description {
+    font-size: 1.15rem;
     color: var(--text-light);
-    margin-bottom: 3rem;
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.7;
 }
 
 /* Features */
@@ -382,4 +427,84 @@ body {
     to {
         transform: rotate(360deg);
     }
+}
+
+/* CTA Section */
+.cta-hint {
+    margin-top: 0.75rem;
+    font-size: 0.95rem;
+    color: var(--text-light);
+    font-weight: 400;
+}
+
+/* About Section */
+.about-section {
+    margin-top: 4rem;
+    padding: 2.5rem;
+    background: var(--white);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    text-align: left;
+}
+
+.about-section h3 {
+    font-size: 1.75rem;
+    color: var(--text-color);
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-weight: 700;
+}
+
+.about-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+.about-item h4 {
+    color: var(--primary-color);
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+}
+
+.about-item p {
+    color: var(--text-light);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* Footer Updates */
+.footer-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.footer-brands {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    font-size: 0.9rem;
+}
+
+.footer-dot {
+    opacity: 0.5;
+}
+
+.footer-info {
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+.footer-info p {
+    margin: 0;
+}
+
+/* Button SVG alignment */
+.btn-primary svg {
+    vertical-align: middle;
 }
