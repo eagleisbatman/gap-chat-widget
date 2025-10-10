@@ -13,11 +13,9 @@ import fetch from 'node-fetch';
 const app = express();
 const PORT = process.env.PORT || 3002;
 
-// Your OpenAI API key (from environment variable)
+// Configuration from environment variables
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-
-// Your workflow ID from OpenAI Agent Builder
-const WORKFLOW_ID = 'wf_68e9243fb2d8819096f40007348b673a071b12eea47ebea9';
+const WORKFLOW_ID = process.env.WORKFLOW_ID;
 
 // Middleware
 app.use(cors({
@@ -44,6 +42,10 @@ app.post('/api/chatkit/session', async (req, res) => {
 
     if (!OPENAI_API_KEY) {
       throw new Error('OPENAI_API_KEY environment variable is not set');
+    }
+
+    if (!WORKFLOW_ID) {
+      throw new Error('WORKFLOW_ID environment variable is not set');
     }
 
     // Get or generate device ID
