@@ -1,0 +1,146 @@
+/**
+ * ChatKit Session Server
+ *
+ * This Express server creates ChatKit sessions and handles authentication
+ * with your OpenAI workflow.
+ */
+
+import 'dotenv/config';
+import express from 'express';
+import cors from 'cors';
+import fetch from 'node-fetch';
+
+const app = express();
+const PORT = process.env.PORT || 3002;
+
+// Your OpenAI API key (from environment variable)
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+
+// Your workflow ID from OpenAI Agent Builder
+const WORKFLOW_ID = 'wf_68e9243fb2d8819096f40007348b673a071b12eea47ebea9';
+
+// Middleware
+app.use(cors({
+  origin: '*', // In production, restrict to your domain
+  methods: ['GET', 'POST'],
+}));
+app.use(express.json());
+app.use(express.static('.')); // Serve static files from current directory
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({
+    status: 'healthy',
+    service: 'chatkit-session-server',
+    workflowId: WORKFLOW_ID,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Create ChatKit session endpoint
+app.post('/api/chatkit/session', async (req, res) => {
+  try {
+    console.log('[ChatKit] Creating new session...');
+
+    if (!OPENAI_API_KEY) {
+      throw new Error('OPENAI_API_KEY environment variable is not set');
+    }
+
+    // Get or generate device ID
+    const deviceId = req.body.deviceId || `device-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+    console.log(`[ChatKit] Device ID: ${deviceId}`);
+
+    // Create session with OpenAI ChatKit API
+    const response = await fetch('https://api.openai.com/v1/chatkit/sessions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'OpenAI-Beta': 'chatkit_beta=v1',
+        'Authorization': `Bearer ${OPENAI_API_KEY}`
+      },
+      body: JSON.stringify({
+        workflow: { id: WORKFLOW_ID },
+        user: deviceId,
+      })
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('[ChatKit] OpenAI API error:', response.status, errorText);
+      throw new Error(`OpenAI API error: ${response.status} - ${errorText}`);
+    }
+
+    const data = await response.json();
+    console.log('[ChatKit] Session created successfully');
+
+    res.json({
+      client_secret: data.client_secret,
+      session_id: data.id,
+      created_at: data.created_at
+    });
+
+  } catch (error) {
+    console.error('[ChatKit] Error creating session:', error.message);
+    res.status(500).json({
+      error: 'Failed to create ChatKit session',
+      message: error.message,
+      details: error.toString()
+    });
+  }
+});
+
+// Refresh session endpoint (optional, for session renewal)
+app.post('/api/chatkit/refresh', async (req, res) => {
+  try {
+    const { currentClientSecret } = req.body;
+
+    if (!currentClientSecret) {
+      return res.status(400).json({ error: 'currentClientSecret is required' });
+    }
+
+    console.log('[ChatKit] Refreshing session...');
+
+    // In a real implementation, you'd validate and refresh the session
+    // For now, we'll create a new session
+    const deviceId = req.body.deviceId || `device-${Date.now()}`;
+
+    const response = await fetch('https://api.openai.com/v1/chatkit/sessions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'OpenAI-Beta': 'chatkit_beta=v1',
+        'Authorization': `Bearer ${OPENAI_API_KEY}`
+      },
+      body: JSON.stringify({
+        workflow: { id: WORKFLOW_ID },
+        user: deviceId,
+      })
+    });
+
+    const data = await response.json();
+    res.json({ client_secret: data.client_secret });
+
+  } catch (error) {
+    console.error('[ChatKit] Error refreshing session:', error);
+    res.status(500).json({ error: 'Failed to refresh session' });
+  }
+});
+
+// Start server
+app.listen(PORT, () => {
+  console.log('');
+  console.log('🚀 =========================================');
+  console.log('   ChatKit Session Server');
+  console.log('=========================================');
+  console.log(`✅ Server running on http://localhost:${PORT}`);
+  console.log(`📍 Health check: http://localhost:${PORT}/health`);
+  console.log(`🔐 Session endpoint: http://localhost:${PORT}/api/chatkit/session`);
+  console.log(`🌾 Workflow ID: ${WORKFLOW_ID}`);
+  console.log(`🔑 OpenAI API Key: ${OPENAI_API_KEY ? '✅ Configured' : '⚠️  NOT CONFIGURED'}`);
+  console.log('=========================================');
+  console.log(`📂 Serving static files from: ${process.cwd()}`);
+  console.log(`🌐 Open: http://localhost:${PORT}/index.html`);
+  console.log('=========================================');
+  console.log('');
+});

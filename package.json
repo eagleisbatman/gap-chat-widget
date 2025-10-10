@@ -1,0 +1,32 @@
+{
+  "name": "gap-chat-widget",
+  "version": "1.0.0",
+  "description": "FarmerChat - Agriculture Weather Intelligence Widget powered by OpenAI ChatKit",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "chatkit",
+    "agriculture",
+    "weather",
+    "openai",
+    "farming",
+    "kenya"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@openai/chatkit": "^1.0.0",
+    "@openai/chatkit-react": "^1.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^4.18.2",
+    "node-fetch": "^3.3.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

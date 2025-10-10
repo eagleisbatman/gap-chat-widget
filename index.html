@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agriculture Weather Assistant</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Main Content -->
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">🌾</span>
+                <h1>Agriculture Weather Intelligence</h1>
+            </div>
+            <p class="tagline">AI-powered farming assistance with real-time weather data</p>
+        </header>
+
+        <main class="main-content">
+            <div class="hero">
+                <h2>Get instant weather insights for your farm</h2>
+                <p>Ask about weather forecasts, planting recommendations, irrigation schedules, and more</p>
+
+                <div class="features">
+                    <div class="feature-card">
+                        <span class="feature-icon">☀️</span>
+                        <h3>Weather Forecasts</h3>
+                        <p>7-14 day accurate forecasts</p>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">🌱</span>
+                        <h3>Planting Advice</h3>
+                        <p>Know the best time to plant</p>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">💧</span>
+                        <h3>Irrigation Guide</h3>
+                        <p>Optimize water usage</p>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">🌾</span>
+                        <h3>Crop Advisory</h3>
+                        <p>Tailored farming recommendations</p>
+                    </div>
+                </div>
+
+                <div class="cta">
+                    <button class="btn-primary" onclick="openChat()">
+                        <span>💬</span> Start Chat
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>Powered by Tomorrow Now GAP • Built with OpenAI ChatKit</p>
+        </footer>
+    </div>
+
+    <!-- Floating Chat Button -->
+    <button id="chatButton" class="chat-button" onclick="toggleChat()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+    </button>
+
+    <!-- Chat Widget Container -->
+    <div id="chatContainer" class="chat-container">
+        <!-- ChatKit will be embedded here -->
+        <div id="chatkitWidget" class="chatkit-container" style="height: 100%;">
+            <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #666;">
+                <p>Loading chat...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ChatKit Web Component (CDN) -->
+    <script
+        src="https://cdn.platform.openai.com/deployments/chatkit/chatkit.js"
+    ></script>
+
+    <!-- ChatKit Integration Script -->
+    <script type="module" src="chatkit.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
