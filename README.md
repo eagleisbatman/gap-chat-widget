@@ -32,6 +32,14 @@ MCP Server (gap-agriculture-mcp)
     - Provides 4 agricultural tools
 ```
 
+## 🌍 Geographic Coverage
+
+**IMPORTANT:** This chat widget depends on the [gap-agriculture-mcp](https://github.com/eagleisbatman/gap-agriculture-mcp) server, which uses TomorrowNow's Global Access Platform (GAP) for weather data.
+
+**GAP coverage is limited to specific regions.** Before deploying, verify that GAP supports your target region at [tomorrownow.org](https://tomorrownow.org).
+
+Current GAP coverage includes parts of East Africa (Kenya, Tanzania, Uganda, Ethiopia, Somalia) and potentially other regions.
+
 ## 🏃 Quick Start
 
 ### Prerequisites
@@ -40,6 +48,7 @@ MCP Server (gap-agriculture-mcp)
 - OpenAI API key
 - Agent Builder workflow ID
 - MCP server deployed (see [gap-agriculture-mcp](https://github.com/eagleisbatman/gap-agriculture-mcp))
+- **Verify GAP covers your target region**
 
 ### Local Development
 
@@ -246,6 +255,8 @@ The MCP server reads these headers and uses them as defaults when users don't sp
 **User experience:** Users can ask "What's the weather?" without providing coordinates every time.
 
 **Regional setup:** Configure default coordinates for your target region (city, district, or farm).
+
+**Important:** Ensure your coordinates fall within TomorrowNow GAP Platform's coverage area, or users will receive errors when requesting weather data.
 
 ## 🐛 Troubleshooting
 
