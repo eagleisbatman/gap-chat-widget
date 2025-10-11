@@ -1,340 +1,300 @@
-# FarmerChat Widget
+# 🌾 FarmerChat Widget
 
-AI-powered agriculture assistant chat widget integrated with OpenAI ChatKit and GAP MCP server.
+**OpenAI ChatKit-powered chat widget for agricultural intelligence in Kenya and East Africa.**
 
-## Features
+Complete chat interface with session server that connects farmers to real-time weather forecasts, planting recommendations, and irrigation advice through conversational AI.
 
-- 🌾 Clean agriculture-focused landing page
-- 💬 Floating chat widget powered by OpenAI ChatKit
-- 🌤️ Real-time weather forecasts for Kenya
-- 🌱 Planting recommendations
-- 💧 Irrigation advisory
-- 📱 Fully responsive design
-- ⚡ Fast and lightweight
+## ✨ Features
 
-## Prerequisites
+- 💬 Floating chat widget with clean agricultural theme
+- 🌤️ Real-time weather forecasts via OpenAI Agent Builder + MCP
+- 🌱 Farmer-friendly responses (no technical jargon, coordinates, or MCP terminology)
+- 📱 Fully responsive (desktop, tablet, mobile)
+- ⚡ Session server with default farm coordinates
+- 🔄 Auto-session management with ChatKit
 
-- Node.js 18+ installed
+## 🏗️ Architecture
+
+```
+Frontend (index.html + chatkit.js)
+    ↓
+Session Server (server.js)
+    - Creates ChatKit sessions
+    - Injects default farm coordinates via headers
+    ↓
+OpenAI ChatKit API
+    ↓
+OpenAI Agent Builder Workflow
+    - Configured with SYSTEM_PROMPT.md
+    ↓
+MCP Server (gap-agriculture-mcp)
+    - Receives coordinates from headers
+    - Provides 4 agricultural tools
+```
+
+## 🏃 Quick Start
+
+### Prerequisites
+
+- Node.js >= 18.0.0
 - OpenAI API key
-- OpenAI Agent Builder workflow ID
-- GAP MCP server deployed (optional, configured in Agent Builder)
+- Agent Builder workflow ID
+- MCP server deployed (see [gap-agriculture-mcp](https://github.com/eagleisbatman/gap-agriculture-mcp))
 
-## Local Development
-
-1. **Clone the repository**
-   ```bash
-   git clone <your-repo-url>
-   cd gap-chat-widget
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Configure environment variables**
-   ```bash
-   cp .env.example .env
-   ```
-
-   Edit `.env` and add:
-   ```
-   OPENAI_API_KEY=your_openai_api_key_here
-   PORT=3002
-   ```
-
-4. **Update workflow ID** in `chatkit.js`:
-   ```javascript
-   const CHATKIT_CONFIG = {
-       workflowId: 'wf_your_workflow_id_here',
-       // ...
-   };
-   ```
-
-5. **Start the server**
-   ```bash
-   npm start
-   ```
-
-6. **Open in browser**
-   ```
-   http://localhost:3002/index.html
-   ```
-
-## Deploy to Railway
-
-1. **Install Railway CLI** (if not already installed)
-   ```bash
-   npm install -g @railway/cli
-   ```
-
-2. **Login to Railway**
-   ```bash
-   railway login
-   ```
-
-3. **Initialize and deploy**
-   ```bash
-   railway init
-   railway up
-   ```
-
-4. **Set environment variables** in Railway dashboard:
-   - `OPENAI_API_KEY`: Your OpenAI API key
-   - `PORT`: 3002 (or Railway will auto-assign)
-
-5. **Get your deployment URL** from Railway dashboard
-
-## ChatKit Integration
-
-To connect with OpenAI ChatKit:
-
-### Step 1: Complete Prerequisites
-
-1. ✅ MCP server deployed to Railway
-2. ✅ OpenAI Agent Builder workflow created
-3. ✅ Workflow ID obtained
-
-### Step 2: Create Session Endpoint
-
-You need a backend endpoint to create ChatKit sessions. Two options:
-
-#### Option A: Use Next.js (Recommended)
+### Local Development
 
 ```bash
-# Clone ChatKit starter
-git clone https://github.com/openai/openai-chatkit-starter-app
-
-# Install and configure
-cd openai-chatkit-starter-app
+# Clone and install
+git clone https://github.com/eagleisbatman/gap-chat-widget.git
+cd gap-chat-widget
 npm install
 
-# Add to .env.local
+# Configure environment
+cp .env.example .env
+```
+
+**Edit `.env`:**
+```bash
 OPENAI_API_KEY=your_openai_api_key
-NEXT_PUBLIC_CHATKIT_WORKFLOW_ID=your_workflow_id
-
-# Deploy
-vercel
+WORKFLOW_ID=wf_your_workflow_id
+FARM_LATITUDE=-1.2864      # Default: Nairobi, Kenya
+FARM_LONGITUDE=36.8172
+PORT=3002
 ```
 
-Then update `chatkit.js`:
-```javascript
-createSessionEndpoint: 'https://your-chatkit-api.vercel.app/api/create-session'
+**Start server:**
+```bash
+npm start
 ```
 
-#### Option B: Simple Express Server
-
-Create `server/session.js`:
-```javascript
-import express from 'express';
-import fetch from 'node-fetch';
-
-const app = express();
-app.use(express.json());
-
-app.post('/api/create-session', async (req, res) => {
-  const response = await fetch('https://api.openai.com/v1/sessions', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      workflow_id: process.env.WORKFLOW_ID
-    })
-  });
-
-  const data = await response.json();
-  res.json(data);
-});
-
-app.listen(3001);
+**Open browser:**
+```
+http://localhost:3002/index.html
 ```
 
-### Step 3: Update Configuration
+## ⚙️ Configuration
 
-Edit `chatkit.js`:
+### Environment Variables
 
-```javascript
-const CHATKIT_CONFIG = {
-    workflowId: 'your_actual_workflow_id',
-    createSessionEndpoint: 'https://your-api.vercel.app/api/create-session',
-    // ... rest of config
-};
-```
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `OPENAI_API_KEY` | ✅ | OpenAI API key |
+| `WORKFLOW_ID` | ✅ | Agent Builder workflow ID (starts with `wf_`) |
+| `FARM_LATITUDE` | Optional | Default farm latitude (default: -1.2864) |
+| `FARM_LONGITUDE` | Optional | Default farm longitude (default: 36.8172) |
+| `PORT` | Optional | Server port (default: 3002) |
 
-### Step 4: Load ChatKit Library
+### Get Workflow ID
 
-Add to `index.html` before `</body>`:
+1. Go to [platform.openai.com](https://platform.openai.com/playground/agents)
+2. Create Agent Builder workflow
+3. Add MCP server connection
+4. Copy workflow ID from URL: `wf_...`
 
-```html
-<script type="module">
-  import { ChatKit } from 'https://cdn.jsdelivr.net/npm/@openai/chatkit@latest/dist/index.js';
+### System Prompt Configuration
 
-  // Initialize ChatKit
-  const chatkit = new ChatKit({
-    workflowId: 'YOUR_WORKFLOW_ID',
-    container: document.getElementById('chatkitWidget'),
-    // ... configuration
-  });
+**⚠️ CRITICAL:** The Agent Builder workflow must be configured with the system prompt from `SYSTEM_PROMPT.md`.
 
-  await chatkit.render();
-</script>
-```
+**To update Agent Builder prompt:**
 
-## File Structure
+1. Edit `SYSTEM_PROMPT.md` in this repo
+2. Commit changes (for version control)
+3. **Manually copy entire content** to OpenAI Agent Builder:
+   - Go to platform.openai.com
+   - Open your workflow
+   - Paste into System Instructions
+   - Save
+
+**What the prompt does:**
+- Instructs LLM to use MCP tools (never training data for weather)
+- Hides technical details (coordinates, MCP terminology, tool names)
+- Keeps responses SHORT (2-4 sentences for simple queries)
+- Lists all 22 supported crops
+- Restricts web search to agricultural resources only
+
+## 📁 Project Structure
 
 ```
 gap-chat-widget/
-├── index.html          # Main page
-├── styles.css          # Styling
-├── script.js           # Chat widget logic
-├── chatkit.js          # ChatKit configuration
-└── README.md           # This file
+├── server.js              # Session server (creates ChatKit sessions)
+├── index.html             # Landing page + chat container
+├── chatkit.js             # ChatKit configuration
+├── script.js              # Widget UI logic
+├── styles.css             # Custom styling
+├── .env                   # Environment variables (gitignored)
+├── .env.example           # Environment template
+├── package.json           # Dependencies
+├── SYSTEM_PROMPT.md       # Agent Builder system prompt (CRITICAL!)
+├── CLAUDE.md              # Development guidance
+└── README.md              # This file
 ```
 
-## Customization
+## 🚂 Deploy to Vercel
 
-### Colors
+```bash
+# Install Vercel CLI
+npm install -g vercel
+
+# Deploy
+vercel
+
+# Set environment variables in Vercel dashboard:
+#   OPENAI_API_KEY
+#   WORKFLOW_ID
+#   FARM_LATITUDE (optional)
+#   FARM_LONGITUDE (optional)
+```
+
+### Test Deployment
+
+```bash
+# Health check
+curl https://your-app.vercel.app/health
+
+# Test session creation
+curl -X POST https://your-app.vercel.app/api/chatkit/session \
+  -H "Content-Type: application/json" \
+  -d '{"deviceId":"test"}'
+```
+
+## 🎨 Customization
+
+### Update Default Location
+
+Edit `.env`:
+```bash
+FARM_LATITUDE=-0.0917     # Example: Kisumu
+FARM_LONGITUDE=34.7681
+```
+
+### Change Colors
 
 Edit `styles.css`:
-
 ```css
 :root {
     --primary-color: #2d7a3e;      /* Main green */
     --secondary-color: #4a9d5f;    /* Light green */
-    --accent-color: #f4a261;       /* Orange accent */
+    --accent-color: #f4a261;       /* Orange */
 }
 ```
 
-### Starter Prompts
+### Modify Starter Prompts
 
 Edit `chatkit.js`:
-
 ```javascript
 starterPrompts: [
     {
-        icon: '☀️',
+        icon: '🌤️',
         label: 'Your Label',
-        prompt: 'Your prompt text with coordinates'
-    },
-    // Add more...
+        prompt: 'Your custom prompt'
+    }
 ]
 ```
 
-### Content
+### Update Content
 
 Edit `index.html`:
-- Update header title
-- Modify feature cards
-- Change footer text
+- Header title
+- Feature cards
+- Footer text
 
-## Integration with MCP Server
+## 🔧 How It Works
 
-The chat widget connects to your MCP server through OpenAI Agent Builder:
+### Session Flow
 
 ```
-┌──────────────┐     ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
-│  Chat Widget │────▶│   ChatKit    │────▶│OpenAI Agent  │────▶│  MCP Server  │
-│  (Browser)   │     │   (OpenAI)   │     │   Builder    │     │  (Railway)   │
-└──────────────┘     └──────────────┘     └──────────────┘     └──────────────┘
+1. User opens index.html
+   ↓
+2. Frontend calls POST /api/chatkit/session
+   ↓
+3. server.js creates session with OpenAI:
+   - Includes X-Farm-Latitude, X-Farm-Longitude headers
+   - Returns client_secret to frontend
+   ↓
+4. ChatKit widget connects using client_secret
+   ↓
+5. User sends messages → Agent calls MCP tools
+   ↓
+6. MCP server receives coordinates from headers
+   ↓
+7. Responses shown in chat
 ```
 
-## Default Location
+### Default Coordinates
 
-The widget uses Kenya coordinates by default:
-- Latitude: -1.404244
-- Longitude: 35.008688
-
-To enable auto-location detection, uncomment in `chatkit.js`:
+The session server (`server.js`) automatically injects farm coordinates as custom HTTP headers when creating ChatKit sessions:
 
 ```javascript
-const location = await getUserLocation();
-// Use location.lat and location.lon in prompts
-```
-
-## Responsive Design
-
-- Desktop: 400x600px floating widget
-- Tablet: Adaptive sizing
-- Mobile: Full-screen chat when opened
-
-## Browser Support
-
-- Chrome/Edge: ✅
-- Firefox: ✅
-- Safari: ✅
-- Mobile browsers: ✅
-
-## Deployment Checklist
-
-- [ ] MCP server running on Railway
-- [ ] OpenAI Agent Builder workflow configured
-- [ ] Workflow ID obtained
-- [ ] Session endpoint created
-- [ ] `chatkit.js` updated with credentials
-- [ ] ChatKit library loaded
-- [ ] Test locally
-- [ ] Deploy to Vercel/Netlify
-- [ ] Test live deployment
-
-## Troubleshooting
-
-### Chat won't load
-- Check browser console for errors
-- Verify workflow ID is correct
-- Ensure session endpoint is accessible
-- Check CORS settings
-
-### ChatKit not initializing
-- Verify OpenAI API key is valid
-- Check session endpoint returns proper response
-- Ensure ChatKit library is loaded
-
-### Styling issues
-- Clear browser cache
-- Check CSS is loading
-- Verify no conflicting styles
-
-## Next Steps
-
-1. **Test locally**: Open `index.html` and verify layout
-2. **Deploy MCP server**: Follow `gap-mcp-server/README.md`
-3. **Configure Agent Builder**: See main project README
-4. **Update credentials**: Edit `chatkit.js`
-5. **Deploy**: Use Vercel or Netlify
-6. **Test end-to-end**: Verify complete flow works
-
-## Examples
-
-### Example Queries
-
-Once integrated, users can ask:
-
-- "What's the weather forecast for -1.404244, 35.008688?"
-- "Should I plant maize at coordinates -0.05, 37.65?"
-- "Do I need irrigation this week? My location is -1.404244, 35.008688"
-- "Give me farming advice for wheat, location -1.404244, 35.008688"
-
-### Custom Prompts
-
-Add region-specific prompts:
-
-```javascript
-{
-    icon: '🌍',
-    label: 'Nairobi Weather',
-    prompt: 'Weather forecast for Nairobi, Kenya (-1.286389, 36.817223)'
+headers: {
+  'X-Farm-Latitude': FARM_LATITUDE,    // From .env
+  'X-Farm-Longitude': FARM_LONGITUDE   // From .env
 }
 ```
 
-## Support
+The MCP server reads these headers and uses them as default coordinates when users don't specify a location.
 
-For issues:
-- Check main project README
-- Review OpenAI ChatKit docs
-- Check Railway deployment logs
+**User experience:** Farmers can simply ask "What's the weather?" without providing coordinates every time.
 
-## License
+## 🐛 Troubleshooting
 
-MIT
+### Chat Won't Load
+
+**Check:**
+1. Browser console (F12 → Console)
+2. `OPENAI_API_KEY` is set correctly
+3. `WORKFLOW_ID` is correct (starts with `wf_`)
+4. Session endpoint responding: `curl http://localhost:3002/health`
+
+### Session Creation Fails
+
+**Error:** `OPENAI_API_KEY environment variable is not set`
+
+```bash
+# Check .env file exists
+ls -la .env
+
+# Verify variables
+grep OPENAI_API_KEY .env
+grep WORKFLOW_ID .env
+```
+
+### Responses Show Coordinates/Technical Details
+
+1. **Update MCP server** to latest version (should hide coordinates)
+2. **Update system prompt** in Agent Builder with latest `SYSTEM_PROMPT.md`
+3. **Test MCP server directly:** Check responses from `/mcp` endpoint
+
+### Widget Styling Issues
+
+1. Clear browser cache
+2. Hard reload: Cmd/Ctrl + Shift + R
+3. Check CSS is loading in Network tab
+
+## 📚 Resources
+
+- **GitHub:** https://github.com/eagleisbatman/gap-chat-widget
+- **MCP Server:** https://github.com/eagleisbatman/gap-agriculture-mcp
+- **OpenAI ChatKit:** https://platform.openai.com/docs/guides/chatkit
+- **Agent Builder:** https://platform.openai.com/playground/agents
+
+## 🔑 Environment Setup Checklist
+
+- [ ] MCP server deployed to Railway
+- [ ] Agent Builder workflow created
+- [ ] MCP server connected to Agent Builder
+- [ ] Workflow ID obtained
+- [ ] `SYSTEM_PROMPT.md` copied to Agent Builder
+- [ ] `.env` file created with all variables
+- [ ] Test locally: `npm start`
+- [ ] Deploy to Vercel
+- [ ] Test production deployment
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE) file
+
+---
+
+**Built for farmers in Kenya and East Africa 🌾**
+
+[⭐ Star this repo](https://github.com/eagleisbatman/gap-chat-widget)
