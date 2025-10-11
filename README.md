@@ -1,6 +1,6 @@
 # 🌾 FarmerChat Widget
 
-**OpenAI ChatKit-powered chat widget for agricultural intelligence in Kenya and East Africa.**
+**OpenAI ChatKit-powered chat widget for agricultural intelligence.**
 
 Complete chat interface with session server that connects farmers to real-time weather forecasts, planting recommendations, and irrigation advice through conversational AI.
 
@@ -8,9 +8,9 @@ Complete chat interface with session server that connects farmers to real-time w
 
 - 💬 Floating chat widget with clean agricultural theme
 - 🌤️ Real-time weather forecasts via OpenAI Agent Builder + MCP
-- 🌱 Farmer-friendly responses (no technical jargon, coordinates, or MCP terminology)
+- 🌱 User-friendly responses (no technical jargon)
 - 📱 Fully responsive (desktop, tablet, mobile)
-- ⚡ Session server with default farm coordinates
+- ⚡ Session server with configurable default coordinates
 - 🔄 Auto-session management with ChatKit
 
 ## 🏗️ Architecture
@@ -57,8 +57,8 @@ cp .env.example .env
 ```bash
 OPENAI_API_KEY=your_openai_api_key
 WORKFLOW_ID=wf_your_workflow_id
-FARM_LATITUDE=-1.2864      # Default: Nairobi, Kenya
-FARM_LONGITUDE=36.8172
+FARM_LATITUDE=XX.XXXX      # Your default latitude
+FARM_LONGITUDE=YY.YYYY     # Your default longitude
 PORT=3002
 ```
 
@@ -80,8 +80,8 @@ http://localhost:3002/index.html
 |----------|----------|-------------|
 | `OPENAI_API_KEY` | ✅ | OpenAI API key |
 | `WORKFLOW_ID` | ✅ | Agent Builder workflow ID (starts with `wf_`) |
-| `FARM_LATITUDE` | Optional | Default farm latitude (default: -1.2864) |
-| `FARM_LONGITUDE` | Optional | Default farm longitude (default: 36.8172) |
+| `FARM_LATITUDE` | Optional | Default farm latitude for your region |
+| `FARM_LONGITUDE` | Optional | Default farm longitude for your region |
 | `PORT` | Optional | Server port (default: 3002) |
 
 ### Get Workflow ID
@@ -109,8 +109,10 @@ http://localhost:3002/index.html
 - Instructs LLM to use MCP tools (never training data for weather)
 - Hides technical details (coordinates, MCP terminology, tool names)
 - Keeps responses SHORT (2-4 sentences for simple queries)
-- Lists all 22 supported crops
+- Lists all supported crops
 - Restricts web search to agricultural resources only
+
+**Customization:** Modify `SYSTEM_PROMPT.md` to match your region, crops, and language preferences.
 
 ## 📁 Project Structure
 
@@ -129,30 +131,33 @@ gap-chat-widget/
 └── README.md              # This file
 ```
 
-## 🚂 Deploy to Vercel
+## 🚀 Deployment
 
-```bash
-# Install Vercel CLI
-npm install -g vercel
+This application can be deployed to any Node.js hosting platform:
 
-# Deploy
-vercel
+- **PaaS:** Vercel, Netlify, Railway, Heroku, Render
+- **Cloud:** AWS, Google Cloud, Azure
+- **VPS:** DigitalOcean, Linode, your own server
 
-# Set environment variables in Vercel dashboard:
-#   OPENAI_API_KEY
-#   WORKFLOW_ID
-#   FARM_LATITUDE (optional)
-#   FARM_LONGITUDE (optional)
-```
+### Generic Deployment Steps
+
+1. **Push code to version control** (GitHub, GitLab, etc.)
+2. **Choose hosting platform** based on your needs
+3. **Configure environment variables:**
+   - Set `OPENAI_API_KEY`
+   - Set `WORKFLOW_ID`
+   - Set `FARM_LATITUDE` and `FARM_LONGITUDE` for your region
+4. **Deploy** using platform-specific method
+5. **Test:** Open deployment URL in browser
 
 ### Test Deployment
 
 ```bash
 # Health check
-curl https://your-app.vercel.app/health
+curl https://your-deployment-url/health
 
 # Test session creation
-curl -X POST https://your-app.vercel.app/api/chatkit/session \
+curl -X POST https://your-deployment-url/api/chatkit/session \
   -H "Content-Type: application/json" \
   -d '{"deviceId":"test"}'
 ```
@@ -161,10 +166,10 @@ curl -X POST https://your-app.vercel.app/api/chatkit/session \
 
 ### Update Default Location
 
-Edit `.env`:
+Edit `.env` with coordinates for your region:
 ```bash
-FARM_LATITUDE=-0.0917     # Example: Kisumu
-FARM_LONGITUDE=34.7681
+FARM_LATITUDE=XX.XXXX     # Your latitude
+FARM_LONGITUDE=YY.YYYY    # Your longitude
 ```
 
 ### Change Colors
@@ -172,21 +177,26 @@ FARM_LONGITUDE=34.7681
 Edit `styles.css`:
 ```css
 :root {
-    --primary-color: #2d7a3e;      /* Main green */
-    --secondary-color: #4a9d5f;    /* Light green */
-    --accent-color: #f4a261;       /* Orange */
+    --primary-color: #2d7a3e;      /* Main color */
+    --secondary-color: #4a9d5f;    /* Secondary color */
+    --accent-color: #f4a261;       /* Accent color */
 }
 ```
 
 ### Modify Starter Prompts
 
-Edit `chatkit.js`:
+Edit `chatkit.js` with region-specific prompts:
 ```javascript
 starterPrompts: [
     {
         icon: '🌤️',
-        label: 'Your Label',
-        prompt: 'Your custom prompt'
+        label: 'Weather',
+        prompt: 'What\'s the weather forecast?'
+    },
+    {
+        icon: '🌱',
+        label: 'Planting',
+        prompt: 'Should I plant [your crop]?'
     }
 ]
 ```
@@ -194,9 +204,9 @@ starterPrompts: [
 ### Update Content
 
 Edit `index.html`:
-- Header title
-- Feature cards
-- Footer text
+- Change header title and description
+- Update feature cards for your region
+- Modify footer with your organization info
 
 ## 🔧 How It Works
 
@@ -222,7 +232,7 @@ Edit `index.html`:
 
 ### Default Coordinates
 
-The session server (`server.js`) automatically injects farm coordinates as custom HTTP headers when creating ChatKit sessions:
+The session server (`server.js`) automatically injects farm coordinates as custom HTTP headers:
 
 ```javascript
 headers: {
@@ -231,9 +241,11 @@ headers: {
 }
 ```
 
-The MCP server reads these headers and uses them as default coordinates when users don't specify a location.
+The MCP server reads these headers and uses them as defaults when users don't specify a location.
 
-**User experience:** Farmers can simply ask "What's the weather?" without providing coordinates every time.
+**User experience:** Users can ask "What's the weather?" without providing coordinates every time.
+
+**Regional setup:** Configure default coordinates for your target region (city, district, or farm).
 
 ## 🐛 Troubleshooting
 
@@ -258,11 +270,11 @@ grep OPENAI_API_KEY .env
 grep WORKFLOW_ID .env
 ```
 
-### Responses Show Coordinates/Technical Details
+### Responses Show Technical Details
 
-1. **Update MCP server** to latest version (should hide coordinates)
+1. **Update MCP server** to latest version
 2. **Update system prompt** in Agent Builder with latest `SYSTEM_PROMPT.md`
-3. **Test MCP server directly:** Check responses from `/mcp` endpoint
+3. **Verify prompt emphasizes** hiding coordinates and technical terms
 
 ### Widget Styling Issues
 
@@ -277,16 +289,17 @@ grep WORKFLOW_ID .env
 - **OpenAI ChatKit:** https://platform.openai.com/docs/guides/chatkit
 - **Agent Builder:** https://platform.openai.com/playground/agents
 
-## 🔑 Environment Setup Checklist
+## 🔑 Setup Checklist
 
-- [ ] MCP server deployed to Railway
+- [ ] MCP server deployed
 - [ ] Agent Builder workflow created
 - [ ] MCP server connected to Agent Builder
 - [ ] Workflow ID obtained
 - [ ] `SYSTEM_PROMPT.md` copied to Agent Builder
 - [ ] `.env` file created with all variables
+- [ ] Default coordinates configured for your region
 - [ ] Test locally: `npm start`
-- [ ] Deploy to Vercel
+- [ ] Deploy to production
 - [ ] Test production deployment
 
 ## 📄 License
@@ -295,6 +308,6 @@ MIT License - see [LICENSE](LICENSE) file
 
 ---
 
-**Built for farmers in Kenya and East Africa 🌾**
+**Open source agricultural intelligence for farmers worldwide 🌾**
 
 [⭐ Star this repo](https://github.com/eagleisbatman/gap-chat-widget)
