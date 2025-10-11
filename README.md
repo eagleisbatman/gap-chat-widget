@@ -8,6 +8,10 @@ Complete chat interface with session server that connects farmers to real-time w
 
 - 💬 Floating chat widget with clean agricultural theme
 - 🌤️ Real-time weather forecasts via OpenAI Agent Builder + MCP
+- 🎤 **Voice input/output** - Speak your questions, hear responses (English & Swahili)
+- 🌍 **Bilingual support** - Full English and Swahili language support
+- 📸 **Plant disease diagnosis** - Upload photos for AI-powered health analysis
+- 📍 **Location-aware** - Auto-detect location or use default coordinates
 - 🌱 User-friendly responses (no technical jargon)
 - 📱 Fully responsive (desktop, tablet, mobile)
 - ⚡ Session server with configurable default coordinates
@@ -127,17 +131,21 @@ http://localhost:3002/index.html
 
 ```
 gap-chat-widget/
-├── server.js              # Session server (creates ChatKit sessions)
-├── index.html             # Landing page + chat container
-├── chatkit.js             # ChatKit configuration
-├── script.js              # Widget UI logic
-├── styles.css             # Custom styling
-├── .env                   # Environment variables (gitignored)
-├── .env.example           # Environment template
-├── package.json           # Dependencies
-├── SYSTEM_PROMPT.md       # Agent Builder system prompt (CRITICAL!)
-├── CLAUDE.md              # Development guidance
-└── README.md              # This file
+├── server.js                  # Session server (creates ChatKit sessions + voice API proxy)
+├── index.html                 # Landing page + chat container
+├── chatkit.js                 # ChatKit configuration
+├── script.js                  # Widget UI logic
+├── styles.css                 # Custom styling
+├── voice-manager.js           # Voice input/output manager (STT/TTS)
+├── markdown-stripper.js       # Markdown to speech conversion
+├── location-manager.js        # Geolocation handling
+├── image-upload-manager.js    # Plant photo upload & diagnosis
+├── .env                       # Environment variables (gitignored)
+├── .env.example               # Environment template
+├── package.json               # Dependencies
+├── SYSTEM_PROMPT.md           # Agent Builder system prompt (CRITICAL!)
+├── CLAUDE.md                  # Development guidance
+└── README.md                  # This file
 ```
 
 ## 🚀 Deployment
@@ -216,6 +224,98 @@ Edit `index.html`:
 - Change header title and description
 - Update feature cards for your region
 - Modify footer with your organization info
+
+## 🎤 Voice Features
+
+FarmerChat supports full voice interaction in both English and Swahili.
+
+### Voice Input (Speech-to-Text)
+
+- **Technology**: OpenAI Whisper API (whisper-1 model)
+- **Languages**: Auto-detects English and Swahili
+- **Accent support**: Optimized for Kenyan English and Swahili accents
+- **Recording**: Up to 60 seconds per message
+- **UI**: Orange microphone button with recording pulse animation
+
+**Usage:**
+1. Click the microphone button (🎤)
+2. Grant microphone permission (first time)
+3. Speak your question in English or Swahili
+4. Click again to stop (or wait for auto-stop after 60s)
+5. Transcription automatically sent to chat
+
+### Voice Output (Text-to-Speech)
+
+- **Technology**: OpenAI TTS API (tts-1-hd model)
+- **Voice**: Nova (warm, friendly female voice)
+- **Languages**: Supports both English and Swahili
+- **Auto-play**: Responses automatically speak
+- **Optimization**: Markdown stripped for natural speech
+
+**Features:**
+- Conversational markers added ("Okay", "Well", "Hmm")
+- Farmer-friendly voice instructions for natural tone
+- Handles Kenyan Swahili pronunciation well
+
+### Voice API Endpoints
+
+**Server provides two proxy endpoints:**
+
+**POST /api/voice/transcribe** - Whisper STT proxy
+```bash
+curl -X POST http://localhost:3002/api/voice/transcribe \
+  -F "audio=@recording.webm" \
+  -F "model=whisper-1"
+```
+
+**POST /api/voice/speak** - TTS proxy
+```bash
+curl -X POST http://localhost:3002/api/voice/speak \
+  -H "Content-Type: application/json" \
+  -d '{"text":"Hello farmer","voice":"nova","model":"tts-1-hd"}'
+```
+
+## 🌍 Swahili Language Support
+
+FarmerChat is **fully bilingual** - English and Swahili.
+
+### Language Features
+
+- **Auto-detection**: Responds in the same language the user uses
+- **Seamless switching**: Users can switch languages mid-conversation
+- **Natural Swahili**: Uses conversational Kenyan Swahili dialect
+- **Agricultural terms**: Familiar farming vocabulary (mahindi, kumwagilia, shamba)
+- **Same brevity**: Short, concise responses in both languages
+
+### Swahili Examples
+
+**Weather query:**
+```
+User: "Hali ya hewa leo ni vipi?"
+Bot: "Leo tutapata joto la 24°C na mvua kidogo (5mm) mchana..."
+```
+
+**Planting advice:**
+```
+User: "Je, nipande mahindi sasa?"
+Bot: "✅ NDIO - Ni wakati mzuri kupanda mahindi! Joto ni 22°C..."
+```
+
+**Irrigation:**
+```
+User: "Nimwagilie leo?"
+Bot: "Hapana leo - mvua ya 15mm inakuja mchana. Angalia udongo kesho."
+```
+
+### Configuring Swahili Support
+
+Swahili support is **pre-configured** in `SYSTEM_PROMPT.md`. To customize:
+
+1. Edit language guidelines in `SYSTEM_PROMPT.md`
+2. Add region-specific Swahili agricultural terms
+3. Update examples for your context
+4. Copy updated prompt to Agent Builder
+5. Test with Swahili queries
 
 ## 🔧 How It Works
 
