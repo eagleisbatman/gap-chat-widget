@@ -6,16 +6,19 @@ let chatkitLoaded = false;
 function toggleChat() {
     const container = document.getElementById('chatContainer');
     const button = document.getElementById('chatButton');
+    const imageButtons = document.getElementById('imageUploadButtons');
 
     isChatOpen = !isChatOpen;
 
     if (isChatOpen) {
         container.classList.add('open');
         button.classList.add('hidden');
+        imageButtons.style.display = 'flex'; // Show image upload buttons
         chatkitLoaded = true; // ChatKit is already initialized in chatkit.js
     } else {
         container.classList.remove('open');
         button.classList.remove('hidden');
+        imageButtons.style.display = 'none'; // Hide image upload buttons
     }
 }
 
@@ -98,3 +101,32 @@ function handleResize() {
 }
 
 window.addEventListener('resize', handleResize);
+
+// Image upload button event handlers
+document.addEventListener('DOMContentLoaded', () => {
+    const cameraButton = document.getElementById('cameraButton');
+    const uploadButton = document.getElementById('uploadButton');
+    const fileInput = document.getElementById('fileInput');
+
+    // Camera capture
+    if (cameraButton) {
+        cameraButton.addEventListener('click', async () => {
+            if (window.imageUploadManager) {
+                await window.imageUploadManager.captureFromCamera();
+            }
+        });
+    }
+
+    // File upload
+    if (uploadButton && fileInput) {
+        uploadButton.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', async (event) => {
+            if (window.imageUploadManager) {
+                await window.imageUploadManager.handleFileUpload(event);
+            }
+        });
+    }
+});

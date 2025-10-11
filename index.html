@@ -109,6 +109,24 @@
         </svg>
     </button>
 
+    <!-- Image Upload Buttons (shown when chat is open) -->
+    <div id="imageUploadButtons" class="image-upload-buttons" style="display: none;">
+        <button id="cameraButton" class="image-upload-btn camera-btn" title="Take Photo">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                <circle cx="12" cy="13" r="4"/>
+            </svg>
+        </button>
+        <button id="uploadButton" class="image-upload-btn upload-btn" title="Upload Image">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+        </button>
+        <input type="file" id="fileInput" accept="image/jpeg,image/jpg,image/png,image/webp" style="display: none;">
+    </div>
+
     <!-- Chat Widget Container -->
     <div id="chatContainer" class="chat-container">
         <!-- ChatKit will be embedded here -->
@@ -126,6 +144,9 @@
 
     <!-- Location Manager (must load before chatkit.js) -->
     <script src="location-manager.js"></script>
+
+    <!-- Image Upload Manager (must load before chatkit.js) -->
+    <script src="image-upload-manager.js"></script>
 
     <!-- ChatKit Integration Script -->
     <script type="module" src="chatkit.js"></script>
