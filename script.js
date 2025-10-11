@@ -102,10 +102,11 @@ function handleResize() {
 
 window.addEventListener('resize', handleResize);
 
-// Image upload button event handlers
+// Image upload and voice button event handlers
 document.addEventListener('DOMContentLoaded', () => {
     const cameraButton = document.getElementById('cameraButton');
     const uploadButton = document.getElementById('uploadButton');
+    const voiceButton = document.getElementById('voiceButton');
     const fileInput = document.getElementById('fileInput');
 
     // Camera capture
@@ -128,5 +129,47 @@ document.addEventListener('DOMContentLoaded', () => {
                 await window.imageUploadManager.handleFileUpload(event);
             }
         });
+    }
+
+    // Voice input
+    if (voiceButton && window.voiceManager) {
+        const recordingPulse = voiceButton.querySelector('.recording-pulse');
+
+        // Set up transcription callback
+        window.voiceManager.onTranscriptionComplete = (transcription, language) => {
+            console.log('[Voice] Transcription received:', transcription);
+
+            // Send transcription to ChatKit
+            if (window.chatkitInstance && window.chatkitInstance.sendMessage) {
+                window.chatkitInstance.sendMessage(transcription);
+            } else {
+                console.warn('[Voice] ChatKit instance not available to send message');
+            }
+        };
+
+        // Voice button click handler
+        voiceButton.addEventListener('click', async () => {
+            if (window.voiceManager.isRecording) {
+                // Stop recording
+                window.voiceManager.stopRecording();
+                voiceButton.classList.remove('recording');
+                if (recordingPulse) recordingPulse.style.display = 'none';
+            } else {
+                // Start recording
+                const started = await window.voiceManager.startRecording();
+                if (started) {
+                    voiceButton.classList.add('recording');
+                    if (recordingPulse) recordingPulse.style.display = 'block';
+                }
+            }
+        });
+
+        // Also listen for voice manager's recording state changes
+        const checkRecordingState = setInterval(() => {
+            if (window.voiceManager && !window.voiceManager.isRecording) {
+                voiceButton.classList.remove('recording');
+                if (recordingPulse) recordingPulse.style.display = 'none';
+            }
+        }, 500);
     }
 });

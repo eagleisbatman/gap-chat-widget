@@ -1053,3 +1053,146 @@ body {
         padding: 0.875rem 1rem;
     }
 }
+
+/* ==================== Voice Components ==================== */
+
+/* Voice Button (part of image-upload-buttons group) */
+.voice-btn {
+    position: relative;
+    background: var(--accent-color); /* Orange/accent color for distinction */
+}
+
+.voice-btn:hover {
+    background: #e89249; /* Darker accent on hover */
+}
+
+/* Recording state */
+.voice-btn.recording {
+    background: #e74c3c; /* Red when recording */
+    animation: recordingPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes recordingPulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
+    }
+    50% {
+        box-shadow: 0 0 0 10px rgba(231, 76, 60, 0);
+    }
+}
+
+/* Recording pulse indicator */
+.recording-pulse {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: rgba(231, 76, 60, 0.3);
+    animation: pulseExpand 1.5s ease-out infinite;
+    pointer-events: none;
+    z-index: -1;
+}
+
+@keyframes pulseExpand {
+    0% {
+        width: 100%;
+        height: 100%;
+        opacity: 1;
+    }
+    100% {
+        width: 140%;
+        height: 140%;
+        opacity: 0;
+    }
+}
+
+/* Voice Notifications */
+.voice-notification {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    background: var(--white);
+    padding: 1rem 1.25rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow-lg);
+    max-width: 400px;
+    z-index: 2003; /* Above image notifications */
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.3s ease;
+    border-left: 4px solid var(--accent-color);
+}
+
+.voice-notification.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.voice-notification-success {
+    border-left-color: #4caf50;
+}
+
+.voice-notification-error {
+    border-left-color: #f44336;
+}
+
+.voice-notification-warning {
+    border-left-color: #ff9800;
+}
+
+.voice-notification-info {
+    border-left-color: #2196f3;
+}
+
+/* Voice button tooltip */
+.voice-btn::before {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: rgba(0, 0, 0, 0.8);
+    color: var(--white);
+    font-size: 0.75rem;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+.voice-btn:hover::before {
+    opacity: 1;
+}
+
+/* Recording state tooltip override */
+.voice-btn.recording::before {
+    content: 'Click to stop';
+}
+
+/* Mobile Responsive for Voice UI */
+@media (max-width: 768px) {
+    .voice-notification {
+        max-width: calc(100% - 2rem);
+        right: 1rem;
+        left: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .voice-notification {
+        top: 0.5rem;
+        right: 0.5rem;
+        left: 0.5rem;
+        padding: 0.875rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    .voice-btn::before {
+        display: none; /* Hide tooltip on very small screens */
+    }
+}

@@ -10,25 +10,33 @@ const CHATKIT_CONFIG = {
 
     starterPrompts: [
         {
-            label: '☀️ Weather Forecast',
+            label: '☀️ Weather / Hali ya Hewa',
             prompt: 'What is the weather forecast?'
         },
         {
-            label: '🌱 Planting Advice',
+            label: '🌱 Planting / Kupanda',
             prompt: 'Should I plant maize?'
         },
         {
-            label: '💧 Irrigation Schedule',
+            label: '💧 Irrigation / Umwagiliaji',
             prompt: 'Do I need to irrigate this week?'
         },
         {
-            label: '🌾 Farming Advisory',
-            prompt: 'Give me farming recommendations for the next 2 weeks for maize.'
+            label: '🌾 Advisory / Ushauri',
+            prompt: 'Give me farming recommendations for the next 2 weeks.'
+        },
+        {
+            label: '🌤️ Swahili: Hali ya Hewa',
+            prompt: 'Hali ya hewa wiki hii ni vipi?'
+        },
+        {
+            label: '🌿 Swahili: Kupanda',
+            prompt: 'Je, nipande mahindi sasa?'
         }
     ],
 
-    greeting: 'Welcome to FarmerChat! Ask me about weather, planting advice, or irrigation schedules for your farm in Kenya.',
-    placeholder: 'Ask about weather, planting, or irrigation...'
+    greeting: 'Welcome to FarmerChat! Ask me about weather, planting advice, or irrigation in English or Swahili. Karibu! Uliza kuhusu hali ya hewa, kupanda, au umwagiliaji kwa Kiingereza au Kiswahili.',
+    placeholder: 'Ask about weather, planting, irrigation... / Uliza kuhusu hali ya hewa, kupanda, umwagiliaji...'
 };
 
 /**
@@ -153,6 +161,31 @@ async function initChatKit() {
 
         // Append to container
         container.appendChild(chatkit);
+
+        // Store instance globally for voice manager to access
+        window.chatkitInstance = chatkit;
+
+        // Set up voice output for ChatKit responses
+        if (window.voiceManager) {
+            console.log('[ChatKit] Setting up voice output for responses...');
+
+            // Listen for ChatKit message events
+            chatkit.addEventListener('message', async (event) => {
+                const message = event.detail;
+
+                // Only process assistant messages
+                if (message.role === 'assistant' && message.content) {
+                    console.log('[Voice] Assistant response received, generating speech...');
+
+                    // Convert response to speech using Nova voice
+                    await window.voiceManager.textToSpeech(message.content, {
+                        language: 'auto', // Auto-detect language (English or Swahili)
+                        autoPlay: true,
+                        stripMarkdown: true
+                    });
+                }
+            });
+        }
 
         console.log('[ChatKit] Widget initialized successfully');
 
