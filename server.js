@@ -53,7 +53,13 @@ app.post('/api/chatkit/session', async (req, res) => {
     // Get or generate device ID
     const deviceId = req.body.deviceId || `device-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
+    // Get coordinates from request body or use environment defaults
+    const latitude = req.body.latitude || FARM_LATITUDE;
+    const longitude = req.body.longitude || FARM_LONGITUDE;
+    const locationSource = req.body.locationSource || 'default';
+
     console.log(`[ChatKit] Device ID: ${deviceId}`);
+    console.log(`[ChatKit] Coordinates: ${latitude}, ${longitude} (source: ${locationSource})`);
 
     // Create session with OpenAI ChatKit API
     const response = await fetch('https://api.openai.com/v1/chatkit/sessions', {
@@ -62,8 +68,8 @@ app.post('/api/chatkit/session', async (req, res) => {
         'Content-Type': 'application/json',
         'OpenAI-Beta': 'chatkit_beta=v1',
         'Authorization': `Bearer ${OPENAI_API_KEY}`,
-        'X-Farm-Latitude': FARM_LATITUDE,
-        'X-Farm-Longitude': FARM_LONGITUDE
+        'X-Farm-Latitude': latitude.toString(),
+        'X-Farm-Longitude': longitude.toString()
       },
       body: JSON.stringify({
         workflow: { id: WORKFLOW_ID },
@@ -111,14 +117,18 @@ app.post('/api/chatkit/refresh', async (req, res) => {
     // For now, we'll create a new session
     const deviceId = req.body.deviceId || `device-${Date.now()}`;
 
+    // Get coordinates from request body or use environment defaults
+    const latitude = req.body.latitude || FARM_LATITUDE;
+    const longitude = req.body.longitude || FARM_LONGITUDE;
+
     const response = await fetch('https://api.openai.com/v1/chatkit/sessions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'OpenAI-Beta': 'chatkit_beta=v1',
         'Authorization': `Bearer ${OPENAI_API_KEY}`,
-        'X-Farm-Latitude': FARM_LATITUDE,
-        'X-Farm-Longitude': FARM_LONGITUDE
+        'X-Farm-Latitude': latitude.toString(),
+        'X-Farm-Longitude': longitude.toString()
       },
       body: JSON.stringify({
         workflow: { id: WORKFLOW_ID },

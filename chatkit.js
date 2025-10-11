@@ -51,12 +51,24 @@ async function getClientSecret() {
         const deviceId = getDeviceId();
         console.log('[ChatKit] Creating session for device:', deviceId);
 
+        // Get current coordinates from location manager
+        const coordinates = window.locationManager ?
+            window.locationManager.getCurrentCoordinates() :
+            { latitude: -1.2864, longitude: 36.8172, source: 'default' };
+
+        console.log('[ChatKit] Using coordinates:', coordinates);
+
         const response = await fetch(CHATKIT_CONFIG.sessionEndpoint, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ deviceId })
+            body: JSON.stringify({
+                deviceId,
+                latitude: coordinates.latitude,
+                longitude: coordinates.longitude,
+                locationSource: coordinates.source
+            })
         });
 
         if (!response.ok) {
@@ -164,8 +176,19 @@ async function initChatKit() {
 }
 
 // Initialize when DOM is ready
+async function initializeApp() {
+    // Initialize location manager first
+    if (window.locationManager) {
+        console.log('[App] Initializing location manager...');
+        await window.locationManager.initialize({ askPermission: true, showUI: true });
+    }
+
+    // Then initialize ChatKit
+    await initChatKit();
+}
+
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initChatKit);
+    document.addEventListener('DOMContentLoaded', initializeApp);
 } else {
-    initChatKit();
+    initializeApp();
 }

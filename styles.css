@@ -508,3 +508,218 @@ body {
 .btn-primary svg {
     vertical-align: middle;
 }
+
+/* ========================================
+   Location Manager Styles
+   ======================================== */
+
+/* Location Dialog Overlay */
+.location-dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.location-dialog-overlay.show {
+    opacity: 1;
+}
+
+/* Location Dialog */
+.location-dialog {
+    background: var(--white);
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    max-width: 480px;
+    width: calc(100% - 2rem);
+    margin: 1rem;
+    animation: dialogSlideUp 0.3s ease;
+}
+
+@keyframes dialogSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.location-dialog-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: var(--white);
+    padding: 1.5rem;
+    border-radius: 16px 16px 0 0;
+}
+
+.location-dialog-header h3 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.location-dialog-body {
+    padding: 1.5rem;
+}
+
+.location-dialog-body p {
+    margin-bottom: 1rem;
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+.location-dialog-body ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem 0;
+}
+
+.location-dialog-body ul li {
+    padding: 0.5rem 0;
+    color: var(--text-color);
+    font-size: 0.95rem;
+}
+
+.privacy-note {
+    background: #f0f7ff;
+    padding: 0.75rem;
+    border-radius: 8px;
+    border-left: 3px solid #2196f3;
+    margin-top: 1rem;
+}
+
+.privacy-note small {
+    color: #1976d2;
+    font-size: 0.85rem;
+}
+
+.location-dialog-actions {
+    padding: 1rem 1.5rem 1.5rem;
+    display: flex;
+    gap: 1rem;
+    flex-direction: column-reverse;
+}
+
+.location-dialog-actions button {
+    padding: 0.875rem 1.5rem;
+    border-radius: 8px;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-secondary {
+    background: var(--bg-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background: var(--border-color);
+}
+
+/* Location Notification */
+.location-notification {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    background: var(--white);
+    padding: 1rem 1.25rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow-lg);
+    max-width: 400px;
+    z-index: 2001;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.3s ease;
+    border-left: 4px solid var(--primary-color);
+}
+
+.location-notification.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.location-notification-success {
+    border-left-color: #4caf50;
+}
+
+.location-notification-warning {
+    border-left-color: #ff9800;
+}
+
+.location-notification-info {
+    border-left-color: #2196f3;
+}
+
+.notification-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.notification-icon {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.notification-message {
+    flex: 1;
+    font-size: 0.9rem;
+    color: var(--text-color);
+    line-height: 1.5;
+}
+
+/* Mobile Responsive for Location UI */
+@media (max-width: 768px) {
+    .location-dialog {
+        max-width: calc(100% - 2rem);
+        margin: 1rem;
+    }
+
+    .location-dialog-actions {
+        flex-direction: column-reverse;
+    }
+
+    .location-notification {
+        max-width: calc(100% - 2rem);
+        right: 1rem;
+        left: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .location-dialog-header h3 {
+        font-size: 1.1rem;
+    }
+
+    .location-dialog-body {
+        padding: 1rem;
+    }
+
+    .location-dialog-actions {
+        padding: 0.75rem 1rem 1rem;
+    }
+
+    .location-notification {
+        top: 0.5rem;
+        right: 0.5rem;
+        left: 0.5rem;
+        padding: 0.875rem 1rem;
+    }
+}
