@@ -3,41 +3,65 @@
  * Using OpenAI ChatKit Web Component
  */
 
+// Language Configurations
+const LANGUAGE_CONFIGS = {
+    en: {
+        starterPrompts: [
+            {
+                label: '☀️ Weather Forecast',
+                prompt: 'What is the weather forecast?'
+            },
+            {
+                label: '🌱 Planting Advice',
+                prompt: 'Should I plant maize?'
+            },
+            {
+                label: '💧 Irrigation Schedule',
+                prompt: 'Do I need to irrigate this week?'
+            },
+            {
+                label: '🌾 Farming Advisory',
+                prompt: 'Give me farming recommendations for the next 2 weeks.'
+            }
+        ],
+        greeting: 'Welcome to FarmerChat! Ask me about weather, planting advice, or irrigation.',
+        placeholder: 'Ask about weather, planting, irrigation...'
+    },
+    sw: {
+        starterPrompts: [
+            {
+                label: '🌤️ Hali ya Hewa',
+                prompt: 'Hali ya hewa wiki hii ni vipi?'
+            },
+            {
+                label: '🌱 Kupanda',
+                prompt: 'Je, nipande mahindi sasa?'
+            },
+            {
+                label: '💧 Umwagiliaji',
+                prompt: 'Je, nimwagilie wiki hii?'
+            },
+            {
+                label: '🌾 Ushauri wa Kilimo',
+                prompt: 'Nipe ushauri wa kilimo kwa wiki 2 zijazo.'
+            }
+        ],
+        greeting: 'Karibu FarmerChat! Uliza kuhusu hali ya hewa, kupanda, au umwagiliaji.',
+        placeholder: 'Uliza kuhusu hali ya hewa, kupanda, umwagiliaji...'
+    }
+};
+
 // Configuration
 const CHATKIT_CONFIG = {
     workflowId: 'wf_68e9243fb2d8819096f40007348b673a071b12eea47ebea9',
     sessionEndpoint: '/api/chatkit/session',
-
-    starterPrompts: [
-        {
-            label: '☀️ Weather / Hali ya Hewa',
-            prompt: 'What is the weather forecast?'
-        },
-        {
-            label: '🌱 Planting / Kupanda',
-            prompt: 'Should I plant maize?'
-        },
-        {
-            label: '💧 Irrigation / Umwagiliaji',
-            prompt: 'Do I need to irrigate this week?'
-        },
-        {
-            label: '🌾 Advisory / Ushauri',
-            prompt: 'Give me farming recommendations for the next 2 weeks.'
-        },
-        {
-            label: '🌤️ Swahili: Hali ya Hewa',
-            prompt: 'Hali ya hewa wiki hii ni vipi?'
-        },
-        {
-            label: '🌿 Swahili: Kupanda',
-            prompt: 'Je, nipande mahindi sasa?'
-        }
-    ],
-
-    greeting: 'Welcome to FarmerChat! Ask me about weather, planting advice, or irrigation in English or Swahili. Karibu! Uliza kuhusu hali ya hewa, kupanda, au umwagiliaji kwa Kiingereza au Kiswahili.',
-    placeholder: 'Ask about weather, planting, irrigation... / Uliza kuhusu hali ya hewa, kupanda, umwagiliaji...'
+    currentLanguage: 'en', // Default language
+    ...LANGUAGE_CONFIGS.en
 };
+
+// Make config globally accessible for language switching
+window.CHATKIT_CONFIG = CHATKIT_CONFIG;
+window.LANGUAGE_CONFIGS = LANGUAGE_CONFIGS;
 
 /**
  * Get or create device ID for session management
@@ -145,14 +169,20 @@ async function initChatKit() {
             api: {
                 getClientSecret: getClientSecret
             },
+            theme: theme,
             startScreen: {
                 greeting: CHATKIT_CONFIG.greeting,
                 prompts: CHATKIT_CONFIG.starterPrompts
             },
             composer: {
-                placeholder: CHATKIT_CONFIG.placeholder
-            },
-            theme: theme
+                placeholder: CHATKIT_CONFIG.placeholder,
+                attachments: {
+                    enabled: true,
+                    maxCount: 5,
+                    maxSize: 10 * 1024 * 1024, // 10MB
+                    accept: 'image/*' // Accept all image types
+                }
+            }
         });
 
         // Set size
@@ -164,6 +194,105 @@ async function initChatKit() {
 
         // Store instance globally for voice manager to access
         window.chatkitInstance = chatkit;
+
+        // Add language switching function
+        window.switchChatKitLanguage = function(lang) {
+            if (!LANGUAGE_CONFIGS[lang]) {
+                console.error(`[ChatKit] Unknown language: ${lang}`);
+                return;
+            }
+
+            if (CHATKIT_CONFIG.currentLanguage === lang) {
+                console.log(`[ChatKit] Already using language: ${lang}`);
+                return;
+            }
+
+            console.log(`[ChatKit] Switching language to: ${lang}`);
+            CHATKIT_CONFIG.currentLanguage = lang;
+
+            // Update config with new language
+            Object.assign(CHATKIT_CONFIG, LANGUAGE_CONFIGS[lang]);
+
+            // Remove old ChatKit instance
+            const container = document.getElementById('chatkitWidget');
+
+            // Detect current theme
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const currentTheme = prefersDark ? 'dark' : 'light';
+            const bgColor = currentTheme === 'dark' ? '#1a1a1a' : '#ffffff';
+            const textColor = currentTheme === 'dark' ? '#e5e5e5' : '#666666';
+
+            container.innerHTML = `
+                <div style="display: flex; align-items: center; justify-content: center; height: 100%; background: ${bgColor}; color: ${textColor};">
+                    <div style="text-align: center;">
+                        <div style="margin-bottom: 8px; font-size: 24px;">🌍</div>
+                        <p style="margin: 0; font-weight: 500;">Switching language...</p>
+                    </div>
+                </div>
+            `;
+
+            // Reinitialize ChatKit with new language
+            setTimeout(() => {
+                const newChatkit = document.createElement('openai-chatkit');
+
+                // Configure with new language
+                newChatkit.setOptions({
+                    api: {
+                        getClientSecret: getClientSecret
+                    },
+                    theme: currentTheme,
+                    startScreen: {
+                        greeting: CHATKIT_CONFIG.greeting,
+                        prompts: CHATKIT_CONFIG.starterPrompts
+                    },
+                    composer: {
+                        placeholder: CHATKIT_CONFIG.placeholder,
+                        attachments: {
+                            enabled: true,
+                            maxCount: 5,
+                            maxSize: 10 * 1024 * 1024, // 10MB
+                            accept: 'image/*' // Accept all image types
+                        }
+                    }
+                });
+
+                newChatkit.style.height = '100%';
+                newChatkit.style.width = '100%';
+
+                container.innerHTML = '';
+                container.appendChild(newChatkit);
+
+                // Store new instance globally
+                window.chatkitInstance = newChatkit;
+
+                // Re-attach voice output listener
+                if (window.voiceManager) {
+                    newChatkit.addEventListener('message', async (event) => {
+                        const message = event.detail;
+                        if (message.role === 'assistant' && message.content) {
+                            await window.voiceManager.textToSpeech(message.content, {
+                                language: 'auto',
+                                autoPlay: true,
+                                stripMarkdown: true
+                            });
+                        }
+                    });
+                }
+
+                console.log(`[ChatKit] Language switched to ${lang === 'en' ? 'English' : 'Swahili'}`);
+            }, 100);
+
+            // Update active button state
+            const langButtons = document.querySelectorAll('.lang-btn');
+            langButtons.forEach(btn => {
+                const btnLang = btn.getAttribute('data-lang');
+                if (btnLang === lang) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        };
 
         // Set up voice output for ChatKit responses
         if (window.voiceManager) {
