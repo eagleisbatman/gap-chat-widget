@@ -33,41 +33,96 @@ User Query → Classifier → If/Else → [Weather | Resource | General] Agent �
 ### Step 3: Add Transform Node
 
 1. Drag **"Transform"** node to canvas
-2. Rename to: **"Extract Category"**
+2. Rename to: **"Extract Categories"**
 3. Click to configure
 4. **Transform Code:**
 ```javascript
-// Extract category keyword from classifier output
+// Extract category keyword(s) from classifier output
 const message = input.messages[input.messages.length - 1].content;
 const text = message.toUpperCase().trim();
 
-let category = 'GENERAL'; // default
+let categories = [];
+let isComposite = false;
 
-if (text.includes('WEATHER')) {
-  category = 'WEATHER';
-} else if (text.includes('RESOURCE')) {
-  category = 'RESOURCE';
+// Check for composite queries
+if (text.includes('+')) {
+  isComposite = true;
+  const parts = text.split('+');
+  categories = parts.map(p => p.trim());
+} else {
+  // Single category
+  if (text.includes('WEATHER')) {
+    categories = ['WEATHER'];
+  } else if (text.includes('RESOURCE')) {
+    categories = ['RESOURCE'];
+  } else {
+    categories = ['GENERAL'];
+  }
 }
 
-return { category: category };
+return {
+  categories: categories,
+  isComposite: isComposite,
+  primaryCategory: categories[0] || 'GENERAL'
+};
 ```
-5. Connect Classifier → Extract Category
+5. Connect Classifier → Extract Categories
 
-### Step 4: Add If/Else Logic Node
+### Step 4: Add First If/Else Logic Node (Check for Composite)
 
 1. Drag **"If/Else"** node to canvas
-2. Rename to: **"Route by Category"**
+2. Rename to: **"Check Composite"**
+3. Click to configure
+4. **Condition:**
+   - Name: "Is Composite Query"
+   - Condition: `state.isComposite == true`
+5. **Then branch:** Route to Composite Handler
+6. **Else branch:** Route to Single Category Router
+7. Connect Extract Categories → Check Composite
+
+### Step 5: Add Single Category Router (If/Else Node)
+
+1. Drag **"If/Else"** node to canvas
+2. Rename to: **"Route Single Category"**
 3. Click to configure
 4. **Condition 1:**
    - Name: "Is Weather Query"
-   - Condition: `state.category == "WEATHER"`
+   - Condition: `state.primaryCategory == "WEATHER"`
 5. **Condition 2:**
    - Name: "Is Resource Query"
-   - Condition: `state.category == "RESOURCE"`
+   - Condition: `state.primaryCategory == "RESOURCE"`
 6. **Else:** Default to General Agent
-7. Connect Extract Category → Route by Category
+7. Connect Check Composite (ELSE branch) → Route Single Category
 
-### Step 5: Add Weather Agent Node
+### Step 5A: Add Composite Query Handler (For Multi-Agent Calls)
+
+**Option 1: Sequential Agent Calls (Simpler)**
+
+1. Drag **"If/Else"** node to canvas (for WEATHER+RESOURCE)
+2. Rename to: **"Composite Router"**
+3. **Condition:** `state.categories.includes("WEATHER") && state.categories.includes("RESOURCE")`
+4. **Then branch:**
+   - a. Call Weather Agent → Store response in `state.weatherResponse`
+   - b. Set State node → Store weather response
+   - c. Call Resource Agent → Store response in `state.resourceResponse`
+   - d. Set State node → Store resource response
+   - e. Transform node → Combine responses:
+   ```javascript
+   const combined = `${state.weatherResponse}\n\n---\n\n${state.resourceResponse}`;
+   return { finalResponse: combined };
+   ```
+   - f. → END
+5. Connect Check Composite (THEN branch) → Composite Router
+
+**Option 2: Parallel Agent Calls (Advanced)**
+
+Use Agent Builder's parallel execution if available:
+- Fork into parallel branches
+- Call Weather Agent and Resource Agent simultaneously
+- Join results with Transform node
+- Combine responses
+
+### Step 6: Add Weather Agent Node
 
 1. Drag **"Agent"** node to canvas
 2. Rename to: **"Weather Agent"**
