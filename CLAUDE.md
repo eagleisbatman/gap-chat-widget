@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Architecture
 
-Two main components:
+Three main components:
 
 ### 1. Session Server (server.js)
 - Express.js server that creates OpenAI ChatKit sessions
@@ -21,6 +21,15 @@ Two main components:
 - Floating chat button (bottom-right)
 - Connects to session server for authentication
 - No direct calls to MCP server (goes through OpenAI Agent Builder)
+
+### 3. Multi-Agent System (OpenAI Agent Builder) [NEW]
+- **Classification-based routing** with 4 specialized agents
+- **Classifier Agent**: Routes queries by category (WEATHER/RESOURCE/GENERAL/composite)
+- **Weather Agent**: Handles weather/farming queries using MCP tools only
+- **Resource Agent**: Finds suppliers/services using Web Search only
+- **General Agent**: Handles greetings and general knowledge (no tools)
+- **Composite Query Support**: Sequential multi-agent execution for complex queries
+- Each agent has focused responsibility, eliminating tool confusion
 
 ## Key Files
 
@@ -45,13 +54,44 @@ Two main components:
 - Starter prompts (weather, planting, irrigation queries)
 - Custom styling
 
-### SYSTEM_PROMPT.md
-**Complete Agent Builder system prompt**
-- Critical resource: Copy this to OpenAI Agent Builder
-- Defines LLM behavior, tool usage, response style
-- Emphasizes hiding technical details
-- Lists all 22 supported crops
-- Restricts web search to agricultural resources
+### Multi-Agent System Prompts [NEW]
+
+**AGENT_BUILDER_SETUP.md** - Complete workflow setup guide
+- Step-by-step instructions for building multi-agent workflow
+- Visual flowcharts and diagrams
+- Node configuration details (Agent, If/Else, Transform)
+- Composite query handling implementation
+- Testing checklist and troubleshooting
+
+**CLASSIFIER_PROMPT.md** - Classifier agent prompt
+- Routes queries to appropriate agent
+- Outputs single keyword: WEATHER, RESOURCE, GENERAL, or composite (WEATHER+RESOURCE)
+- Temperature: 0.1 for deterministic classification
+
+**WEATHER_AGENT_PROMPT.md** - Weather agent prompt
+- Handles weather/farming queries using MCP tools ONLY
+- 4 tools: get_weather_forecast, get_planting_recommendation, get_irrigation_advisory, get_farming_advisory
+- No Web Search access
+- Concise responses (2-4 sentences), hides technical details
+
+**RESOURCE_AGENT_PROMPT.md** - Resource agent prompt
+- Finds suppliers, services, market information using Web Search ONLY
+- No MCP tools access
+- Returns 3-5 options with contact information
+
+**GENERAL_AGENT_PROMPT.md** - General agent prompt
+- Handles greetings and general knowledge
+- No tools (knowledge-based only)
+- Redirects specific queries to other agents
+
+**COMPOSITE_QUERY_FLOW.md** - Composite query documentation
+- Detailed explanation of multi-agent execution
+- Example traces with step-by-step breakdown
+- Edge cases and testing scenarios
+
+**SYSTEM_PROMPT_WEATHER_ONLY.md** - [DEPRECATED]
+- Legacy single-agent prompt with decision tree
+- Replaced by multi-agent architecture
 
 ## Development Commands
 
@@ -189,64 +229,85 @@ const CHATKIT_CONFIG = {
 };
 ```
 
-## System Prompt (SYSTEM_PROMPT.md)
+## Multi-Agent System Configuration [NEW]
 
-**CRITICAL: This must be manually copied to OpenAI Agent Builder.**
+**CRITICAL: Each agent prompt must be manually copied to its Agent Builder node.**
 
-The file contains:
-1. Data source restrictions (use MCP tools only, never training data)
-2. Coordinate handling (defaults pre-configured, hide from users)
-3. **Instructions to hide technical details** (MCP, coordinates, tool names)
-4. Tool descriptions and data architecture explanation
-5. 22 supported crops
-6. Web search restrictions (agricultural resources only)
-7. **Response style: SHORT and SIMPLE** (2-4 sentences for basic queries)
-8. Error handling (farmer-friendly messages)
-9. Data attribution (TomorrowNow GAP Platform)
-10. Example interactions
+### Setup Process:
 
-### Key Prompt Sections
+1. **Follow AGENT_BUILDER_SETUP.md** - Complete step-by-step guide
+   - Build visual workflow with drag-and-drop nodes
+   - Configure Classifier, Weather, Resource, General agents
+   - Set up If/Else routing logic
+   - Add composite query handling
 
-**Section 3: Hiding Technical Information**
-- Never mention "MCP", coordinates, API details
-- Say "Based on weather data from TomorrowNow GAP Platform"
-- Focus on agricultural insights, not data mechanics
+2. **Copy agent prompts** to respective nodes:
+   - CLASSIFIER_PROMPT.md → Classifier Agent node
+   - WEATHER_AGENT_PROMPT.md → Weather Agent node
+   - RESOURCE_AGENT_PROMPT.md → Resource Agent node
+   - GENERAL_AGENT_PROMPT.md → General Agent node
 
-**Section 4: Data Architecture**
-- Explains: GAP → MCP → Agent → User
-- GAP provides weather ONLY
-- MCP analyzes weather for agriculture
-- Agent presents advice simply
+3. **Configure tools** for each agent:
+   - Classifier: No tools
+   - Weather: MCP connection + 4 tools (no Web Search)
+   - Resource: Web Search only (no MCP tools)
+   - General: No tools
 
-**Section 7: Response Style - BREVITY**
-- Simple queries: 2-3 sentences
-- Planting decision: 3-4 sentences + 1-2 actions
-- Irrigation: 4-5 sentences max
-- Avoid long explanations
+4. **Set reasoning effort** to "Low" for all agents to reduce verbose output
 
-## Updating System Prompt
+### Key Multi-Agent Principles:
 
-When you modify `SYSTEM_PROMPT.md`:
+**Classifier Agent:**
+- Outputs single keyword for routing (WEATHER/RESOURCE/GENERAL/composite)
+- Temperature: 0.1 for consistent classification
+- No explanation, just the category
 
-1. **Commit to Git** (for version control)
+**Weather Agent:**
+- Uses MCP tools exclusively (never training data for weather)
+- Hides technical details (coordinates, tool names, MCP terminology)
+- Concise responses (2-4 sentences)
+- Attribution: "Based on satellite data from TomorrowNow GAP Platform"
+
+**Resource Agent:**
+- Uses Web Search only (never MCP tools)
+- Returns 3-5 options with contact information
+- Focus on Kenya and East Africa
+
+**General Agent:**
+- Knowledge-based responses only (no tools)
+- Redirects specific queries to appropriate agents
+- Handles greetings and general agriculture knowledge
+
+**Composite Queries:**
+- Sequential multi-agent execution
+- Example: "Should I plant and where to buy seeds?" → Weather Agent + Resource Agent
+- Responses combined with separator (`---`)
+
+## Updating Agent Prompts
+
+When you modify agent prompts:
+
+1. **Commit to Git** (local only, no push to remote)
 ```bash
-git add SYSTEM_PROMPT.md
-git commit -m "Update system prompt: [description]"
-git push
+git add CLASSIFIER_PROMPT.md WEATHER_AGENT_PROMPT.md  # etc.
+git commit -m "Update agent prompts: [description]"
+# DO NOT push to remote
 ```
 
 2. **Manually update Agent Builder**
 - Go to platform.openai.com
 - Find your workflow (WORKFLOW_ID from .env)
-- Navigate to System Instructions
-- Copy entire SYSTEM_PROMPT.md content
-- Paste into Agent Builder
+- Navigate to the specific agent node
+- Copy updated prompt content
+- Paste into agent's System Instructions
 - Save workflow
 
 3. **Test changes**
 - Use Agent Builder playground
-- Test in chat widget
-- Verify responses follow new instructions
+- Test routing: "Will it rain?" → Weather Agent
+- Test routing: "Where to buy seeds?" → Resource Agent
+- Test composite: "Should I plant and where to buy seeds?" → Both agents
+- Verify responses follow updated instructions
 
 ## Deployment (Vercel/Netlify)
 
@@ -383,14 +444,24 @@ Edit `index.html` and `styles.css`:
 
 ```
 gap-chat-widget/
-├── server.js              # Session server (Express.js)
-├── index.html            # Landing page + widget container
-├── chatkit.js            # ChatKit configuration
-├── styles.css            # Custom styling
-├── package.json          # Dependencies
-├── .env                  # Environment variables (not committed)
-├── SYSTEM_PROMPT.md      # Agent Builder prompt (commit this)
-└── CLAUDE.md            # This file
+├── server.js                      # Session server (Express.js)
+├── index.html                     # Landing page + widget container
+├── chatkit.js                     # ChatKit configuration
+├── styles.css                     # Custom styling
+├── package.json                   # Dependencies
+├── .env                           # Environment variables (not committed)
+│
+├── AGENT_BUILDER_SETUP.md         # Multi-agent workflow setup guide [NEW]
+├── CLASSIFIER_PROMPT.md           # Classifier agent prompt [NEW]
+├── WEATHER_AGENT_PROMPT.md        # Weather agent prompt [NEW]
+├── RESOURCE_AGENT_PROMPT.md       # Resource agent prompt [NEW]
+├── GENERAL_AGENT_PROMPT.md        # General agent prompt [NEW]
+├── COMPOSITE_QUERY_FLOW.md        # Composite query documentation [NEW]
+│
+├── SYSTEM_PROMPT_WEATHER_ONLY.md  # Legacy single-agent prompt [DEPRECATED]
+├── TOOL_DECISION_TREE.md          # Legacy decision tree doc [DEPRECATED]
+│
+└── CLAUDE.md                      # This file
 ```
 
 ## Related Resources
