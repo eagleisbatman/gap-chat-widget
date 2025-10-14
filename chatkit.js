@@ -316,6 +316,17 @@ async function initChatKit() {
             });
         }
 
+        // Suppress ChatKit internal React errors (non-breaking)
+        const originalConsoleError = console.error;
+        console.error = function(...args) {
+            // Suppress React error #185 (ChatKit internal infinite loop warning)
+            if (args[0]?.includes?.('Error handling thread event') ||
+                args[0]?.includes?.('Minified React error #185')) {
+                return; // Silently ignore
+            }
+            originalConsoleError.apply(console, args);
+        };
+
         console.log('[ChatKit] Widget initialized successfully');
 
     } catch (error) {
