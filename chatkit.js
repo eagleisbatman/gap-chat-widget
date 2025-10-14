@@ -179,8 +179,8 @@ async function initChatKit() {
                 attachments: {
                     enabled: true,
                     maxCount: 5,
-                    maxSize: 10 * 1024 * 1024, // 10MB
-                    accept: 'image/*' // Accept all image types
+                    maxSize: 10 * 1024 * 1024 // 10MB
+                    // Omitting accept parameter - let ChatKit use defaults
                 }
             }
         });
@@ -250,8 +250,8 @@ async function initChatKit() {
                         attachments: {
                             enabled: true,
                             maxCount: 5,
-                            maxSize: 10 * 1024 * 1024, // 10MB
-                            accept: 'image/*' // Accept all image types
+                            maxSize: 10 * 1024 * 1024 // 10MB
+                            // Omitting accept parameter - let ChatKit use defaults
                         }
                     }
                 });

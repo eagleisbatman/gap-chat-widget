@@ -83,7 +83,7 @@ app.post('/api/chatkit/session', async (req, res) => {
       },
       body: JSON.stringify({
         workflow: { id: WORKFLOW_ID },
-        user: deviceId,
+        user: deviceId
       })
     });
 
@@ -142,7 +142,7 @@ app.post('/api/chatkit/refresh', async (req, res) => {
       },
       body: JSON.stringify({
         workflow: { id: WORKFLOW_ID },
-        user: deviceId,
+        user: deviceId
       })
     });
 

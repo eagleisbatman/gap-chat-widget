@@ -109,38 +109,23 @@
         </svg>
     </button>
 
-    <!-- Image Upload Buttons (shown when chat is open) -->
-    <div id="imageUploadButtons" class="image-upload-buttons" style="display: none;">
-        <button id="cameraButton" class="image-upload-btn camera-btn" title="Take Photo">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                <circle cx="12" cy="13" r="4"/>
-            </svg>
-        </button>
-        <button id="uploadButton" class="image-upload-btn upload-btn" title="Upload Image">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="17 8 12 3 7 8"/>
-                <line x1="12" y1="3" x2="12" y2="15"/>
-            </svg>
-        </button>
-        <button id="voiceButton" class="image-upload-btn voice-btn" title="Voice Input">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-                <line x1="12" y1="19" x2="12" y2="23"/>
-                <line x1="8" y1="23" x2="16" y2="23"/>
-            </svg>
-            <span class="recording-pulse" style="display: none;"></span>
-        </button>
-        <input type="file" id="fileInput" accept="image/jpeg,image/jpg,image/png,image/webp" style="display: none;">
-    </div>
-
     <!-- Chat Widget Container -->
     <div id="chatContainer" class="chat-container">
+        <!-- Language Selector (fixed at top of chat) -->
+        <div class="chat-language-selector">
+            <button id="langEnglish" class="lang-btn active" data-lang="en" onclick="window.switchChatKitLanguage('en')">
+                <span class="lang-flag">🇬🇧</span>
+                <span class="lang-text">EN</span>
+            </button>
+            <button id="langSwahili" class="lang-btn" data-lang="sw" onclick="window.switchChatKitLanguage('sw')">
+                <span class="lang-flag">🇰🇪</span>
+                <span class="lang-text">SW</span>
+            </button>
+        </div>
+
         <!-- ChatKit will be embedded here -->
-        <div id="chatkitWidget" class="chatkit-container" style="height: 100%;">
-            <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #666;">
+        <div id="chatkitWidget" class="chatkit-container" style="height: calc(100% - 60px); background: #1a1a1a;">
+            <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #e5e5e5;">
                 <p>Loading chat...</p>
             </div>
         </div>
@@ -162,7 +147,7 @@
     <script src="voice-manager.js"></script>
 
     <!-- ChatKit Integration Script -->
-    <script type="module" src="chatkit.js"></script>
+    <script type="module" src="chatkit.js?v=4"></script>
     <script src="script.js"></script>
 </body>
 </html>

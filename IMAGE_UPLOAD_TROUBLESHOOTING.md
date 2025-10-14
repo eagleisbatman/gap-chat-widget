@@ -6,10 +6,12 @@ This guide helps you configure both ChatKit and Agent Builder to properly handle
 
 ---
 
-## ✅ STEP 1: Agent Builder Workflow Configuration
+## ✅ STEP 1: Agent Builder Workflow Configuration (CRITICAL!)
+
+**🚨 IMPORTANT: This is the root cause of upload failures. File uploads MUST be enabled in Agent Builder workflow settings.**
 
 ### 1.1 Go to Agent Builder
-1. Visit `https://platform.openai.com/agent-builder`
+1. Visit `https://platform.openai.com/agent-builder` or `https://platform.openai.com/workflows`
 2. Open your FarmerChat workflow: `wf_68e9243fb2d8819096f40007348b673a071b12eea47ebea9`
 
 ### 1.2 Check Model Configuration
@@ -68,9 +70,10 @@ e) `diagnose_plant_disease`:
 
 ---
 
-## ✅ STEP 2: ChatKit Configuration (Already Done)
+## ✅ STEP 2: ChatKit Configuration (✅ COMPLETED)
 
-The following is already configured in `chatkit.js`:
+### 2.1 Frontend Configuration (chatkit.js)
+The following is configured in `chatkit.js`:
 
 ```javascript
 composer: {
@@ -79,10 +82,31 @@ composer: {
         enabled: true,
         maxCount: 5,
         maxSize: 10 * 1024 * 1024, // 10MB
-        accept: 'image/*' // Accept all image types
+        accept: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'] // Array of MIME types
     }
 }
 ```
+
+### 2.2 Session Server Configuration (server.js) - ✅ COMPLETED
+The session server now enables attachments when creating ChatKit sessions:
+
+```javascript
+body: JSON.stringify({
+  workflow: { id: WORKFLOW_ID },
+  user: deviceId,
+  options: {
+    attachments: {
+      enabled: true,
+      max_file_size: 10 * 1024 * 1024, // 10MB
+      allowed_mime_types: ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+    }
+  }
+})
+```
+
+This configuration is applied to both:
+- Main session endpoint: `/api/chatkit/session`
+- Refresh endpoint: `/api/chatkit/refresh`
 
 ---
 
