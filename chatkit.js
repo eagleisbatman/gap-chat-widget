@@ -9,22 +9,22 @@ const LANGUAGE_CONFIGS = {
         starterPrompts: [
             {
                 label: '☀️ Weather Forecast',
-                prompt: 'What is the weather forecast?'
+                prompt: 'What is the weather forecast for the next week?'
             },
             {
                 label: '🌱 Planting Advice',
-                prompt: 'Should I plant maize?'
+                prompt: 'What does the weather forecast say about planting maize this week?'
             },
             {
                 label: '💧 Irrigation Schedule',
-                prompt: 'Do I need to irrigate this week?'
+                prompt: 'Based on the weather forecast, do I need to irrigate this week?'
             },
             {
                 label: '🌾 Farming Advisory',
-                prompt: 'Give me farming recommendations for the next 2 weeks.'
+                prompt: 'What are the weather conditions for farming over the next 2 weeks?'
             }
         ],
-        greeting: 'Welcome to FarmerChat! Ask me about weather, planting advice, or irrigation.',
+        greeting: 'Welcome to FarmerChat! Ask me about weather forecasts and farming advice based on weather data.',
         placeholder: 'Ask about weather, planting, irrigation...'
     },
     sw: {
@@ -35,18 +35,18 @@ const LANGUAGE_CONFIGS = {
             },
             {
                 label: '🌱 Kupanda',
-                prompt: 'Je, nipande mahindi sasa?'
+                prompt: 'Hali ya hewa inasema nini kuhusu kupanda mahindi wiki hii?'
             },
             {
                 label: '💧 Umwagiliaji',
-                prompt: 'Je, nimwagilie wiki hii?'
+                prompt: 'Kulingana na hali ya hewa, je, nimwagilie wiki hii?'
             },
             {
                 label: '🌾 Ushauri wa Kilimo',
-                prompt: 'Nipe ushauri wa kilimo kwa wiki 2 zijazo.'
+                prompt: 'Ni hali gani ya hewa kwa kilimo kwa wiki 2 zijazo?'
             }
         ],
-        greeting: 'Karibu FarmerChat! Uliza kuhusu hali ya hewa, kupanda, au umwagiliaji.',
+        greeting: 'Karibu FarmerChat! Uliza kuhusu hali ya hewa na ushauri wa kilimo kulingana na data ya hali ya hewa.',
         placeholder: 'Uliza kuhusu hali ya hewa, kupanda, umwagiliaji...'
     }
 };

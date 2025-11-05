@@ -105,23 +105,23 @@ window.addEventListener('resize', handleResize);
 // Language configuration
 const LANGUAGE_CONFIG = {
     en: {
-        greeting: 'Welcome to FarmerChat! Ask me about weather, planting advice, or irrigation.',
+        greeting: 'Welcome to FarmerChat! Ask me about weather forecasts and farming advice based on weather data.',
         placeholder: 'Ask about weather, planting, irrigation...',
         starterPrompts: [
-            { label: '☀️ Weather Forecast', prompt: 'What is the weather forecast?' },
-            { label: '🌱 Planting Advice', prompt: 'Should I plant maize?' },
-            { label: '💧 Irrigation Schedule', prompt: 'Do I need to irrigate this week?' },
-            { label: '🌾 Farming Advisory', prompt: 'Give me farming recommendations for the next 2 weeks.' }
+            { label: '☀️ Weather Forecast', prompt: 'What is the weather forecast for the next week?' },
+            { label: '🌱 Planting Advice', prompt: 'What does the weather forecast say about planting maize this week?' },
+            { label: '💧 Irrigation Schedule', prompt: 'Based on the weather forecast, do I need to irrigate this week?' },
+            { label: '🌾 Farming Advisory', prompt: 'What are the weather conditions for farming over the next 2 weeks?' }
         ]
     },
     sw: {
-        greeting: 'Karibu FarmerChat! Uliza kuhusu hali ya hewa, kupanda, au umwagiliaji.',
+        greeting: 'Karibu FarmerChat! Uliza kuhusu hali ya hewa na ushauri wa kilimo kulingana na data ya hali ya hewa.',
         placeholder: 'Uliza kuhusu hali ya hewa, kupanda, umwagiliaji...',
         starterPrompts: [
             { label: '🌤️ Hali ya Hewa', prompt: 'Hali ya hewa wiki hii ni vipi?' },
-            { label: '🌱 Kupanda', prompt: 'Je, nipande mahindi sasa?' },
-            { label: '💧 Umwagiliaji', prompt: 'Je, nimwagilie wiki hii?' },
-            { label: '🌾 Ushauri wa Kilimo', prompt: 'Nipe ushauri wa kilimo kwa wiki 2 zijazo.' }
+            { label: '🌱 Kupanda', prompt: 'Hali ya hewa inasema nini kuhusu kupanda mahindi wiki hii?' },
+            { label: '💧 Umwagiliaji', prompt: 'Kulingana na hali ya hewa, je, nimwagilie wiki hii?' },
+            { label: '🌾 Ushauri wa Kilimo', prompt: 'Ni hali gani ya hewa kwa kilimo kwa wiki 2 zijazo?' }
         ]
     }
 };
