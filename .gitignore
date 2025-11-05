@@ -34,3 +34,6 @@ build/
 tmp/
 temp/
 *.tmp
+
+# Cursor IDE rules (local development file)
+.cursorrules
